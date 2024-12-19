@@ -1,0 +1,19 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"><meta name="format-detection" content="telephone=no"><meta name="format-detection" content="email=no"><meta name="description"><meta name="keywords" content="kubernets"><title>gRPC大小事 - Carter`s Blog</title><link rel="stylesheet" href="/css/main_style.min.css"><link rel="icon" href="/favicon.ico"></head><body><input id="navi" type="checkbox"><ul class="main-navication"><li><a href="/"><span>Home</span></a></li><li><a href="https://github.com/zongu"><span>Github</span></a></li></ul><div class="wrapper" id="wrap"><div class="post-header"><label class="navi-button light" for="navi">MENU</label><img class="background" src="/img/galaxy02.jpg"><div class="post-title"><h1 class="title">gRPC大小事</h1><ul class="meta"><li><i class="icon icon-author"></i>Carter Ho</li><li><i class="icon icon-clock"></i>1 Minutes</li><li><i class="icon icon-calendar"></i>2021年9月2日</li></ul></div></div><div class="article-content" style="max-width:800px"><h2 id="甚麼是gRPC？"><a href="#甚麼是gRPC？" class="headerlink" title="甚麼是gRPC？"></a>甚麼是gRPC？</h2><p>由google開發的Remote Porcedure Call(RPC)架構，基於Http/2協議，屬開源軟體，且支援<a href="https://grpc.io/docs/languages/" target="_blank" rel="noopener">多語言</a>，彼此之間傳輸的協議目前用<a href="https://developers.google.com/protocol-buffers/docs/proto3" target="_blank" rel="noopener">proto3</a>，只要有支援gRPC的語言都可以溝通。</p>
+<h2 id="SPDY"><a href="#SPDY" class="headerlink" title="SPDY"></a>SPDY</h2><p>由Google開發的HTTP替代方案，基於TCP的傳輸，相較現行Http1.1改良的有</p>
+<ul>
+<li>Multiplexing(多線操作)：改善Http1.1若請求數過多後就會造成阻塞</li>
+<li>二進制傳輸：在傳輸層跟應用層加上2進制分層，用意是在不改動http1.1語意情況下做調整，將傳輸的內容分割成frame再轉換成2進制用已提升效能。</li>
+<li>強制壓縮：傳輸的內容被強制壓縮，連同header也是(DEFLATE演算法)</li>
+<li>服務端主動推送：實現長連接server call back</li>
+</ul>
+<h2 id="Http-2"><a href="#Http-2" class="headerlink" title="Http/2"></a>Http/2</h2><p>為SPDY的優化版本，壓縮演算法改用HPACK，用來避免對Oracle攻擊</p>
+<h2 id="資料傳遞方式"><a href="#資料傳遞方式" class="headerlink" title="資料傳遞方式"></a><a href="https://grpc.io/docs/what-is-grpc/core-concepts/#rpc-life-cycle" target="_blank" rel="noopener">資料傳遞方式</a></h2><ul>
+<li>Unary RPC(一維遠端調用)：如同一般短連結取資料。</li>
+<li>Server streaming RPC(服務端回應資料流遠端調用)：Client發出請求後服務端回應資料已流的方式，可用在下載大量資料。</li>
+<li>Client streaming RPC(請求端用資料流遠端調用)：Client已流的方式發出多筆消息</li>
+<li>Bidirectional streaming RPC(雙向流遠端調用)：長連結應用</li>
+</ul>
+</div><div class="article-meta" style="max-width:800px"></div><ul class="navication"><li class="home"><a href="/"><i class="icon icon-home"></i></a></li><li><a href="/2021/11/11/MongoDB簡易優化查詢/"><i class="icon icon-arror-left"></i></a></li><li><a href="/2021/07/29/Net5-gRPC應用/"><i class="icon icon-arror-right"></i></a></li></ul><div class="page-footer"><div class="top"><ul class="social"><li><a href="https://github.com/zongu" title="Zongu" target="_blank"><i class="icon icon-github"></i></a></li><li><a href="https://www.facebook.com/zongyuh2" title="Zongu" target="_blank"><i class="icon icon-facebook"></i></a></li><li><a href="https://chretbow.github.io" title="Chretbow" target="_blank"><i class="icon icon-github"></i></a></li></ul></div><div class="bottom"><p class="copyright">© 2024 Carter`s Blog</p></div></div></div><script>var wrap = document.getElementById('wrap');
+window.onload = function () {
+  wrap.className += ' done';
+}</script></body></html>

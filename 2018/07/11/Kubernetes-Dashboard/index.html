@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"><meta name="format-detection" content="telephone=no"><meta name="format-detection" content="email=no"><meta name="description"><meta name="keywords" content="kubernets"><title>Kubernetes_Dashboard - Carter`s Blog</title><link rel="stylesheet" href="/css/main_style.min.css"><link rel="icon" href="/favicon.ico"></head><body><input id="navi" type="checkbox"><ul class="main-navication"><li><a href="/"><span>Home</span></a></li><li><a href="https://github.com/zongu"><span>Github</span></a></li></ul><div class="wrapper" id="wrap"><div class="post-header"><label class="navi-button light" for="navi">MENU</label><img class="background" src="/img/galaxy02.jpg"><div class="post-title"><h1 class="title">Kubernetes_Dashboard</h1><ul class="meta"><li><i class="icon icon-author"></i>Carter Ho</li><li><i class="icon icon-clock"></i>3 Minutes</li><li><i class="icon icon-calendar"></i>2018年7月11日</li></ul></div></div><div class="article-content" style="max-width:800px"><ul>
+<li><p>Kubernetes Dashboard: node的狀況、Pod之間溝通狀態將describe、logs以視覺化方式呈現出來</p>
+<ul>
+<li><h5 id="注意-kubernetes-Dashboard-1-7版後會需要用到SSL-驗證，若不製作憑證的話就只能用localhost來預覽"><a href="#注意-kubernetes-Dashboard-1-7版後會需要用到SSL-驗證，若不製作憑證的話就只能用localhost來預覽" class="headerlink" title="注意: kubernetes Dashboard 1.7版後會需要用到SSL 驗證，若不製作憑證的話就只能用localhost來預覽"></a>注意: kubernetes Dashboard 1.7版後會需要用到SSL 驗證，若不製作憑證的話就只能用localhost來預覽</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>製作帳號權限供dashboard給外部使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl -n kube-system create sa dashboard</span><br><span class="line">kubectl create clusterrolebinding dashboard --clusterrole cluster-admin --serviceaccount=kube-system:dashboard</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>取得dashboard名稱且describe secrets後獲取token</p>
+<ul>
+<li>該token可用於dashboard登入用<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl -n kube-system get sa dashboard -o yaml</span><br><span class="line">kubectl -n kube-system describe secrets &apos;Dashboard Name&apos;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>製作SSL 憑證，並將其安裝client端瀏覽器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 生成client-certificate-data</span><br><span class="line">grep &apos;client-certificate-data&apos; ~/.kube/config | head -n 1 | awk &apos;&#123;print $2&#125;&apos; | base64 -d &gt;&gt; kubecfg.crt</span><br><span class="line"> </span><br><span class="line"># 生成client-key-data</span><br><span class="line">grep &apos;client-key-data&apos; ~/.kube/config | head -n 1 | awk &apos;&#123;print $2&#125;&apos; | base64 -d &gt;&gt; kubecfg.key</span><br><span class="line"> </span><br><span class="line"># 生成p12</span><br><span class="line">openssl pkcs12 -export -clcerts -inkey kubecfg.key -in kubecfg.crt -out kubecfg.p12 -name &quot;kubernetes-client&quot;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>連結方法有兩種</p>
+<ul>
+<li>k8s proxy</li>
+<li>k8s apiservice<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># apiservice solution</span><br><span class="line">https://&apos;master IP&apos;:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>登入頁就可以由剛剛獲得的token來做驗證</p>
+</li>
+</ul>
+</div><div class="article-meta" style="max-width:800px"></div><ul class="navication"><li class="home"><a href="/"><i class="icon icon-home"></i></a></li><li><a href="/2018/09/13/CV/"><i class="icon icon-arror-left"></i></a></li><li><a href="/2018/07/10/Kubernetes入門筆記/"><i class="icon icon-arror-right"></i></a></li></ul><div class="page-footer"><div class="top"><ul class="social"><li><a href="https://github.com/zongu" title="Zongu" target="_blank"><i class="icon icon-github"></i></a></li><li><a href="https://www.facebook.com/zongyuh2" title="Zongu" target="_blank"><i class="icon icon-facebook"></i></a></li><li><a href="https://chretbow.github.io" title="Chretbow" target="_blank"><i class="icon icon-github"></i></a></li></ul></div><div class="bottom"><p class="copyright">© 2024 Carter`s Blog</p></div></div></div><script>var wrap = document.getElementById('wrap');
+window.onload = function () {
+  wrap.className += ' done';
+}</script></body></html>

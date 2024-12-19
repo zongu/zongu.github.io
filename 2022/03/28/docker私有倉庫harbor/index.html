@@ -1,0 +1,55 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"><meta name="format-detection" content="telephone=no"><meta name="format-detection" content="email=no"><meta name="description"><meta name="keywords" content="kubernets"><title>docker私有倉庫harbor - Carter`s Blog</title><link rel="stylesheet" href="/css/main_style.min.css"><link rel="icon" href="/favicon.ico"></head><body><input id="navi" type="checkbox"><ul class="main-navication"><li><a href="/"><span>Home</span></a></li><li><a href="https://github.com/zongu"><span>Github</span></a></li></ul><div class="wrapper" id="wrap"><div class="post-header"><label class="navi-button light" for="navi">MENU</label><img class="background" src="/img/galaxy02.jpg"><div class="post-title"><h1 class="title">docker私有倉庫harbor</h1><ul class="meta"><li><i class="icon icon-author"></i>Carter Ho</li><li><i class="icon icon-clock"></i>3 Minutes</li><li><i class="icon icon-calendar"></i>2022年3月28日</li></ul></div></div><div class="article-content" style="max-width:800px"><h2 id="docker-registry"><a href="#docker-registry" class="headerlink" title="docker registry"></a>docker registry</h2><ul>
+<li>docker hub提供了images的存放位置，但有些自行開發的項目不想暴露在外，或是擔心docker hub在維護時無法使用也會很麻煩，可以善用docker registry來自建一個私有的docker倉庫</li>
+</ul>
+<h2 id="Harbor"><a href="#Harbor" class="headerlink" title="Harbor"></a>Harbor</h2><ul>
+<li><a href="https://goharbor.io/" target="_blank" rel="noopener">Harbor</a>是VMWare用Go寫的docker registry，簡單的UI介面可以讓docker images維護更加便利</li>
+</ul>
+<h2 id="Bitnami"><a href="#Bitnami" class="headerlink" title="Bitnami"></a>Bitnami</h2><ul>
+<li><p><a href="https://bitnami.com/" target="_blank" rel="noopener">Bitnami</a>由<a href="https://bitrock.it" target="_blank" rel="noopener">Bitrock</a>公司贊助，是一個開源專案，為虛擬裝置提供安裝程式或安裝軟體包</p>
+</li>
+<li><p><a href="https://bitnami.com/" target="_blank" rel="noopener">Bitnami</a>將<a href="https://goharbor.io/" target="_blank" rel="noopener">Harbor</a>安裝時需要的項目打包好並整理成docker-compose，讓安裝更加便利</p>
+</li>
+</ul>
+<h2 id="安裝"><a href="#安裝" class="headerlink" title="安裝"></a>安裝</h2><ul>
+<li><p>須確保有安裝<a href="https://docs.docker.com/engine/install/" target="_blank" rel="noopener">docker</a>跟<a href="https://docs.docker.com/compose/install/" target="_blank" rel="noopener">docker-compose</a></p>
+</li>
+<li><p><a href="https://hub.docker.com/r/bitnami/harbor-portal/" target="_blank" rel="noopener">Bitnami/Harbor</a>安裝流程簡易，只需照著文黨執行即可</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ curl -LO https://raw.githubusercontent.com/bitnami/bitnami-docker-harbor-portal/master/docker-compose.yml</span><br><span class="line"></span><br><span class="line">$ curl -L https://github.com/bitnami/bitnami-docker-harbor-portal/archive/master.tar.gz | tar xz --strip=1</span><br><span class="line"></span><br><span class="line">$ docker-compose up</span><br></pre></td></tr></table></figure>
+<ul>
+<li>下載docker-compose後須調整service.core的參數EXT_ENDPOINT配置，原先提供的”reg.mydomain.com”只是範例，需調整成機器可以拜訪的目標IP或是Domain，留存測試時最新版的<a href="docker-compose.txt">備份</a>參考</li>
+</ul>
+<p><img src="001.jpg" alt></p>
+<ul>
+<li><p>執行完docker-compose up後拜訪UI介面預設帳密是admin/bitnami</p>
+</li>
+<li><font color="red">2024/08/02更新</font>
+
+<p>  從2024-01-16開始，Harbor不在提供docker-compose.yaml，也不提供image bitnami/harbor-core:2跟bitnami/chartmuseum:0指定版本；備存yaml可以從<a href="docker-compose.txt">這裡</a>獲得；指定版本image可以從<a href="https://drive.google.com/file/d/1r4-rHmbbjsNggCxX9DmOnNmtevqNpr7y/view?usp=sharing" target="_blank" rel="noopener">這裡</a>取得，並透過下列指令匯入主機</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker load --input xxxx.tar</span><br></pre></td></tr></table></figure>
+<h2 id="docker-image打包上傳"><a href="#docker-image打包上傳" class="headerlink" title="docker image打包上傳"></a>docker image打包上傳</h2><ul>
+<li><p>修改請求端docker daemon設定，將harbor請求domain/ip加入白名單</p>
+<ul>
+<li><p>linux: /etc/docker/daemon.json 添加參數insecure-registries</p>
+</li>
+<li><p>mac/windows: 至docker Desktop &gt; 設定 &gt; Docker Engine添加參數insecure-registries</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="002.jpg" alt></p>
+<ul>
+<li><p>登入harbor: docker login [host(ip)]，並輸入帳密</p>
+</li>
+<li><p>將要上傳的image給予tag: docker tag [來源image] [host(ip)/項目/鏡像名稱:鏡像版號]</p>
+</li>
+<li><p>執行push: docker push [host(ip)/項目/鏡像名稱:鏡像版號]</p>
+</li>
+</ul>
+</div><div class="article-meta" style="max-width:800px"></div><ul class="navication"><li class="home"><a href="/"><i class="icon icon-home"></i></a></li><li><a href="/2022/05/09/kafka概觀/"><i class="icon icon-arror-left"></i></a></li><li><a href="/2022/02/25/Redis-Stream/"><i class="icon icon-arror-right"></i></a></li></ul><div class="page-footer"><div class="top"><ul class="social"><li><a href="https://github.com/zongu" title="Zongu" target="_blank"><i class="icon icon-github"></i></a></li><li><a href="https://www.facebook.com/zongyuh2" title="Zongu" target="_blank"><i class="icon icon-facebook"></i></a></li><li><a href="https://chretbow.github.io" title="Chretbow" target="_blank"><i class="icon icon-github"></i></a></li></ul></div><div class="bottom"><p class="copyright">© 2024 Carter`s Blog</p></div></div></div><script>var wrap = document.getElementById('wrap');
+window.onload = function () {
+  wrap.className += ' done';
+}</script></body></html>

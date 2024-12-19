@@ -1,0 +1,14 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"><meta name="format-detection" content="telephone=no"><meta name="format-detection" content="email=no"><meta name="description"><meta name="keywords" content="kubernets"><title>Redis-Cluster - Carter`s Blog</title><link rel="stylesheet" href="/css/main_style.min.css"><link rel="icon" href="/favicon.ico"></head><body><input id="navi" type="checkbox"><ul class="main-navication"><li><a href="/"><span>Home</span></a></li><li><a href="https://github.com/zongu"><span>Github</span></a></li></ul><div class="wrapper" id="wrap"><div class="post-header"><label class="navi-button light" for="navi">MENU</label><img class="background" src="/img/galaxy02.jpg"><div class="post-title"><h1 class="title">Redis-Cluster</h1><ul class="meta"><li><i class="icon icon-author"></i>Carter Ho</li><li><i class="icon icon-clock"></i>0 Minutes</li><li><i class="icon icon-calendar"></i>2019年9月25日</li></ul></div></div><div class="article-content" style="max-width:800px"><ul>
+<li>Redis運行模式<ul>
+<li>單點結構: 指運行一個redis基礎設施<br><img src="001.jpg" alt></li>
+<li>主從模式(master/slaver): master可讀寫，slave只可讀，負載平衡用；master掛掉後就不能運作<br><img src="002.jpg" alt></li>
+<li>Sentinel模式: 建構在主從模式上額外多了個哨兵(Sentinel)，藉由哨兵來判定master是否健康，master可由slave替代<br><img src="003.jpg" alt></li>
+<li>Cluster模式: 建構在Sentinel模式上，每個Sentinel群組作為一個node，一個cluster至少需三個node<br><img src="004.jpg" alt></li>
+</ul>
+</li>
+<li><a href="https://github.com/zongu/RedisSentinel" target="_blank" rel="noopener">範例程式</a></li>
+</ul>
+</div><div class="article-meta" style="max-width:800px"></div><ul class="navication"><li class="home"><a href="/"><i class="icon icon-home"></i></a></li><li><a href="/2019/09/28/MongoDb副本集/"><i class="icon icon-arror-left"></i></a></li><li><a href="/2019/09/17/Csharp-Nullable-Type/"><i class="icon icon-arror-right"></i></a></li></ul><div class="page-footer"><div class="top"><ul class="social"><li><a href="https://github.com/zongu" title="Zongu" target="_blank"><i class="icon icon-github"></i></a></li><li><a href="https://www.facebook.com/zongyuh2" title="Zongu" target="_blank"><i class="icon icon-facebook"></i></a></li><li><a href="https://chretbow.github.io" title="Chretbow" target="_blank"><i class="icon icon-github"></i></a></li></ul></div><div class="bottom"><p class="copyright">© 2024 Carter`s Blog</p></div></div></div><script>var wrap = document.getElementById('wrap');
+window.onload = function () {
+  wrap.className += ' done';
+}</script></body></html>

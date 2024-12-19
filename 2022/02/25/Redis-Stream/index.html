@@ -1,0 +1,69 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"><meta name="format-detection" content="telephone=no"><meta name="format-detection" content="email=no"><meta name="description"><meta name="keywords" content="kubernets"><title>Redis-Stream - Carter`s Blog</title><link rel="stylesheet" href="/css/main_style.min.css"><link rel="icon" href="/favicon.ico"></head><body><input id="navi" type="checkbox"><ul class="main-navication"><li><a href="/"><span>Home</span></a></li><li><a href="https://github.com/zongu"><span>Github</span></a></li></ul><div class="wrapper" id="wrap"><div class="post-header"><label class="navi-button light" for="navi">MENU</label><img class="background" src="/img/galaxy02.jpg"><div class="post-title"><h1 class="title">Redis-Stream</h1><ul class="meta"><li><i class="icon icon-author"></i>Carter Ho</li><li><i class="icon icon-clock"></i>2 Minutes</li><li><i class="icon icon-calendar"></i>2022年2月25日</li></ul></div></div><div class="article-content" style="max-width:800px"><h2 id="Stream"><a href="#Stream" class="headerlink" title="Stream"></a>Stream</h2><ul>
+<li>Redis 5.0開始支援Stream格式的服務，使用上像List的方式並類似kafak pubsub的特性</li>
+</ul>
+<h2 id="Stream-Group"><a href="#Stream-Group" class="headerlink" title="Stream Group"></a>Stream Group</h2><ul>
+<li>Stream提供群組讀取資料服務，可用於分散式系統發布訂閱用</li>
+<li>XGROP：XGROUP CREATE {RedisKey} {GroupName}<ul>
+<li>{RedisKey}：Stream寫入的key值</li>
+<li>{GroupName}：Stream群組名稱</li>
+</ul>
+</li>
+</ul>
+<h2 id="寫入Stream"><a href="#寫入Stream" class="headerlink" title="寫入Stream"></a>寫入Stream</h2><ul>
+<li>XADD：XADD {RedisKey} {Position} {Field} {Value}……<ul>
+<li>{RedisKey}：Stream寫入的key值</li>
+<li>{Position}：{TimeStamp}-{SerialNumber}組裝方式，若不添加則以系統預設帶入<ul>
+<li>{TimeStamp}：當下時間戳記</li>
+<li>{SerialNumber}：同個時間戳記流水號，若為*則代表由redis決定，但不能小於最後寫入的時間戳記</li>
+<li>新增的資料時間戳記不得小於最後一筆輸入的時間戳記</li>
+</ul>
+</li>
+<li>{Field} {Value}…：寫入的資料欄位的內容，若有多筆則重複添加在後方</li>
+</ul>
+</li>
+</ul>
+<h2 id="讀取Stream"><a href="#讀取Stream" class="headerlink" title="讀取Stream"></a>讀取Stream</h2><ul>
+<li><p>XREAD：XREAD COUNT {Count} STREAMS {RedisKey} {StartPosition}</p>
+<ul>
+<li>{RedisKey}：Stream寫入的key值</li>
+<li>{Count}：讀取筆數</li>
+<li>{StartPosition}：{TimeStamp}-{SerialNumber}組裝方式，若不添加則以系統預設帶入<ul>
+<li>{TimeStamp}：當下時間戳記</li>
+<li>{SerialNumber}：同個時間戳記流水號，若為*則代表由redis決定，但不能小於最後寫入的時間戳記</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>XRANGE：XRANGE {RedisKey} {StartPosition} {EndPosition} COUNT {Count}</p>
+<ul>
+<li>{RedisKey}：Stream寫入的key值</li>
+<li>{Count}：讀取筆數</li>
+<li>{StartPosition}：{TimeStamp}-{SerialNumber}組裝方式，若不添加則以系統預設帶入<ul>
+<li>{TimeStamp}：當下時間戳記</li>
+<li>{SerialNumber}：同個時間戳記流水號，若為*則代表由redis決定，但不能小於最後輸入的時間戳記</li>
+<li>-：”-“Stream存在最小戳記</li>
+</ul>
+</li>
+<li>{EndPosition}：{TimeStamp}-{SerialNumber}組裝方式，若不添加則以系統預設帶入<ul>
+<li>{TimeStamp}：當下時間戳記</li>
+<li>{SerialNumber}：同個時間戳記流水號，若為*則代表由redis決定，但不能小於最後寫入的時間戳記</li>
+<li>+：”+”Stream存在最大戳記</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>XREVRANGE：XRANGE的倒序</p>
+</li>
+<li><p>XREADGROUP：XREADGROUP GROUP {GroupName} {ConsumerName} COUNT {Count} STREAMS {RedisKey}</p>
+<ul>
+<li>{RedisKey}：Stream寫入的key值</li>
+<li>{GroupName}：Stream群組名稱</li>
+<li>{ConsumerName}：消費者名稱</li>
+<li>{Count}：該群組名稱下最新一筆讀取筆數</li>
+</ul>
+</li>
+</ul>
+<h2 id="參考資料-1"><a href="#參考資料-1" class="headerlink" title="參考資料(1)"></a><a href="https://redis.io/topics/streams-intro" target="_blank" rel="noopener">參考資料(1)</a></h2><h2 id="參考資料-2"><a href="#參考資料-2" class="headerlink" title="參考資料(2)"></a><a href="https://redis.io/commands/xack" target="_blank" rel="noopener">參考資料(2)</a></h2><h2 id="範例程式"><a href="#範例程式" class="headerlink" title="範例程式"></a><a href="https://github.com/zongu/RedisStream" target="_blank" rel="noopener">範例程式</a></h2></div><div class="article-meta" style="max-width:800px"></div><ul class="navication"><li class="home"><a href="/"><i class="icon icon-home"></i></a></li><li><a href="/2022/03/28/docker私有倉庫harbor/"><i class="icon icon-arror-left"></i></a></li><li><a href="/2022/01/12/VS2019建立SQL專案/"><i class="icon icon-arror-right"></i></a></li></ul><div class="page-footer"><div class="top"><ul class="social"><li><a href="https://github.com/zongu" title="Zongu" target="_blank"><i class="icon icon-github"></i></a></li><li><a href="https://www.facebook.com/zongyuh2" title="Zongu" target="_blank"><i class="icon icon-facebook"></i></a></li><li><a href="https://chretbow.github.io" title="Chretbow" target="_blank"><i class="icon icon-github"></i></a></li></ul></div><div class="bottom"><p class="copyright">© 2024 Carter`s Blog</p></div></div></div><script>var wrap = document.getElementById('wrap');
+window.onload = function () {
+  wrap.className += ' done';
+}</script></body></html>

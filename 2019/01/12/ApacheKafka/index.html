@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"><meta name="format-detection" content="telephone=no"><meta name="format-detection" content="email=no"><meta name="description"><meta name="keywords" content="kubernets"><title>ApacheKafka - Carter`s Blog</title><link rel="stylesheet" href="/css/main_style.min.css"><link rel="icon" href="/favicon.ico"></head><body><input id="navi" type="checkbox"><ul class="main-navication"><li><a href="/"><span>Home</span></a></li><li><a href="https://github.com/zongu"><span>Github</span></a></li></ul><div class="wrapper" id="wrap"><div class="post-header"><label class="navi-button light" for="navi">MENU</label><img class="background" src="/img/galaxy02.jpg"><div class="post-title"><h1 class="title">ApacheKafka</h1><ul class="meta"><li><i class="icon icon-author"></i>Carter Ho</li><li><i class="icon icon-clock"></i>1 Minutes</li><li><i class="icon icon-calendar"></i>2019年1月12日</li></ul></div></div><div class="article-content" style="max-width:800px"><ul>
+<li>因為工作的關係，需要時常在高併發的情況下處理資料，而且得確保資料的完整性，除了基本的技巧之外，其實也可以善用工具來協助達成需求，發布訂閱行為在此情境相當適合；為什麼要拿Kafka來說呢，其實也就是因為工作上有在使用。</li>
+<li>Kafka的幾個特性讓他相當是用於高併發架構<ul>
+<li>發布/訂閱紀錄</li>
+<li>容錯/耐用持久化紀錄</li>
+<li>在行為發生時處裡紀錄</li>
+</ul>
+</li>
+<li>目前提供四個API供使用<ul>
+<li>Producer<ul>
+<li>將紀錄發佈到Kafka上的Topic</li>
+</ul>
+</li>
+<li>Consumer<ul>
+<li>收取訂閱Topic的資料</li>
+</ul>
+</li>
+<li>Stream<ul>
+<li>讓APP作為中繼處裡，在收取訂閱資料後轉而變換其他的紀錄發佈</li>
+</ul>
+</li>
+<li>Connector<ul>
+<li>允許與資料庫直接溝通並在收取資料時異動資料庫</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>常使用到的幾個名詞<ul>
+<li>Broker<ul>
+<li>Kafka叢集中的硬體設備，目的為分散壓力</li>
+</ul>
+</li>
+<li>Topic<ul>
+<li>可以視作紀錄的類別</li>
+</ul>
+</li>
+<li>Partition<ul>
+<li>每個Topic切分的實際空間，數量要比Consumer多</li>
+</ul>
+</li>
+<li>Producer<ul>
+<li>紀錄的生產者</li>
+</ul>
+</li>
+<li>Consumer<ul>
+<li>紀錄的消費者<br><img src="001.jpg" alt></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>這裡提供<a href="https://github.com/zongu/KafkaSignalR" target="_blank" rel="noopener">Kafka實作範例</a></li>
+</ul>
+</div><div class="article-meta" style="max-width:800px"></div><ul class="navication"><li class="home"><a href="/"><i class="icon icon-home"></i></a></li><li><a href="/2019/01/13/Redis-Lua-Script/"><i class="icon icon-arror-left"></i></a></li><li><a href="/2018/12/23/ELK-DotnetCore應用/"><i class="icon icon-arror-right"></i></a></li></ul><div class="page-footer"><div class="top"><ul class="social"><li><a href="https://github.com/zongu" title="Zongu" target="_blank"><i class="icon icon-github"></i></a></li><li><a href="https://www.facebook.com/zongyuh2" title="Zongu" target="_blank"><i class="icon icon-facebook"></i></a></li><li><a href="https://chretbow.github.io" title="Chretbow" target="_blank"><i class="icon icon-github"></i></a></li></ul></div><div class="bottom"><p class="copyright">© 2024 Carter`s Blog</p></div></div></div><script>var wrap = document.getElementById('wrap');
+window.onload = function () {
+  wrap.className += ' done';
+}</script></body></html>

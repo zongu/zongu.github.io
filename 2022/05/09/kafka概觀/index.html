@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"><meta name="format-detection" content="telephone=no"><meta name="format-detection" content="email=no"><meta name="description"><meta name="keywords" content="kubernets"><title>kafka概觀 - Carter`s Blog</title><link rel="stylesheet" href="/css/main_style.min.css"><link rel="icon" href="/favicon.ico"></head><body><input id="navi" type="checkbox"><ul class="main-navication"><li><a href="/"><span>Home</span></a></li><li><a href="https://github.com/zongu"><span>Github</span></a></li></ul><div class="wrapper" id="wrap"><div class="post-header"><label class="navi-button light" for="navi">MENU</label><img class="background" src="/img/galaxy02.jpg"><div class="post-title"><h1 class="title">kafka概觀</h1><ul class="meta"><li><i class="icon icon-author"></i>Carter Ho</li><li><i class="icon icon-clock"></i>3 Minutes</li><li><i class="icon icon-calendar"></i>2022年5月9日</li></ul></div></div><div class="article-content" style="max-width:800px"><h2 id="kafka主要成員"><a href="#kafka主要成員" class="headerlink" title="kafka主要成員"></a>kafka主要成員</h2><p>之前有寫過一篇<a href="/2019/01/12/ApacheKafka/" title="ApacheKafka">ApacheKafka</a>，最近又再重新玩了一次再把覺得重要的部分記錄下來；kafk主要成員跟資訊有broker、admin、producer、consumer、topic、partition</p>
+<h2 id="kafka運行方式"><a href="#kafka運行方式" class="headerlink" title="kafka運行方式"></a>kafka運行方式</h2><p><img src="001.png" alt></p>
+<ul>
+<li><p>傳輸消息主要分廣播跟pubsub兩種</p>
+<ul>
+<li>producer在推送事件時會對該topic不同的groupId做分組處理，彼此comsume互不相影響以達廣播效果</li>
+<li>同個groupId的consumer對topic做comsume時不會處理到同樣的事件</li>
+</ul>
+</li>
+<li><p>每個topic會有一個以上的partition來做到事件分流</p>
+<ul>
+<li>producer發送事件分派到partition的方式主要由Key Hash或Round Robin決定</li>
+<li>一個partition只會有一個consumer處理，但一個consumer可以處理多個partition，如果consumer數量大餘partition的情況下，多餘的consumer只會發呆不做事</li>
+</ul>
+</li>
+<li><p>topic可以做replica來避免單點故障情形，須注意broker數量需大於replica</p>
+</li>
+<li><p>各broker資訊會存在zookeeper裡，當單點故障跟consumer附載平衡的時候可以做到動態調度</p>
+</li>
+</ul>
+<h2 id="broker"><a href="#broker" class="headerlink" title="broker"></a>broker</h2><ul>
+<li>kafka叢集的基本單位，叢集由一個以上broker組成</li>
+<li>同個kafka叢集不同broker可以個別設定SSL</li>
+</ul>
+<h2 id="admin"><a href="#admin" class="headerlink" title="admin"></a>admin</h2><ul>
+<li>版本1.6之後consumer不支持主動生成topic，須改由admin建立</li>
+<li>broker、topic、consumer資訊可以由admin跟kafak索取</li>
+</ul>
+<h2 id="producer"><a href="#producer" class="headerlink" title="producer"></a>producer</h2><ul>
+<li>生產者，將欲通知的事件傳給kafka叢集</li>
+</ul>
+<h2 id="consumer"><a href="#consumer" class="headerlink" title="consumer"></a>consumer</h2><ul>
+<li>消費者，獲取指定groupId的事件內容</li>
+<li>rabbitmq是rmq主動推送給consumer，kafka是consumer主動跟kafka主動索取</li>
+</ul>
+<h2 id="topic、partition"><a href="#topic、partition" class="headerlink" title="topic、partition"></a>topic、partition</h2><ul>
+<li>topic為事件的主題，一個topic有一個以上的patition來做附載平衡</li>
+</ul>
+<h2 id="優點"><a href="#優點" class="headerlink" title="優點"></a>優點</h2><ul>
+<li>一個topic有多個partition作壓力分散，配合producer送出時Message的key值依演算法推出該事件分配到哪個partition，除非topic刪除重建，否則key跟partition的對應結果不會變；可以根據此特性善加利用</li>
+</ul>
+<h2 id="缺點"><a href="#缺點" class="headerlink" title="缺點"></a>缺點</h2><ul>
+<li>Message的key值演算法推算出指定partition的特性既是優點也是缺點，若Message的key值複雜度不夠豐富的話，很容易事件只會指派到特定幾個partition，導致附載不均衡情況，各事件推送key值該如何訂定也需思考周詳</li>
+</ul>
+<h2 id="參考資料-1"><a href="#參考資料-1" class="headerlink" title="參考資料(1)"></a><a href="https://kafka.apache.org/documentation" target="_blank" rel="noopener">參考資料(1)</a></h2><h2 id="參考資料-2"><a href="#參考資料-2" class="headerlink" title="參考資料(2)"></a><a href="http://xstarcd.github.io/wiki/Cloud/kafka_Working_Principles.html" target="_blank" rel="noopener">參考資料(2)</a></h2><h2 id="範例程式"><a href="#範例程式" class="headerlink" title="範例程式"></a><a href="https://github.com/zongu/KafkaPubSub" target="_blank" rel="noopener">範例程式</a></h2></div><div class="article-meta" style="max-width:800px"></div><ul class="navication"><li class="home"><a href="/"><i class="icon icon-home"></i></a></li><li><a href="/2023/11/07/Net6引用Nlog辦法/"><i class="icon icon-arror-left"></i></a></li><li><a href="/2022/03/28/docker私有倉庫harbor/"><i class="icon icon-arror-right"></i></a></li></ul><div class="page-footer"><div class="top"><ul class="social"><li><a href="https://github.com/zongu" title="Zongu" target="_blank"><i class="icon icon-github"></i></a></li><li><a href="https://www.facebook.com/zongyuh2" title="Zongu" target="_blank"><i class="icon icon-facebook"></i></a></li><li><a href="https://chretbow.github.io" title="Chretbow" target="_blank"><i class="icon icon-github"></i></a></li></ul></div><div class="bottom"><p class="copyright">© 2024 Carter`s Blog</p></div></div></div><script>var wrap = document.getElementById('wrap');
+window.onload = function () {
+  wrap.className += ' done';
+}</script></body></html>

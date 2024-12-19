@@ -1,0 +1,53 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"><meta name="format-detection" content="telephone=no"><meta name="format-detection" content="email=no"><meta name="description"><meta name="keywords" content="kubernets"><title>Kubernetes入門筆記 - Carter`s Blog</title><link rel="stylesheet" href="/css/main_style.min.css"><link rel="icon" href="/favicon.ico"></head><body><input id="navi" type="checkbox"><ul class="main-navication"><li><a href="/"><span>Home</span></a></li><li><a href="https://github.com/zongu"><span>Github</span></a></li></ul><div class="wrapper" id="wrap"><div class="post-header"><label class="navi-button light" for="navi">MENU</label><img class="background" src="/img/galaxy02.jpg"><div class="post-title"><h1 class="title">Kubernetes入門筆記</h1><ul class="meta"><li><i class="icon icon-author"></i>Carter Ho</li><li><i class="icon icon-clock"></i>5 Minutes</li><li><i class="icon icon-calendar"></i>2018年7月10日</li></ul></div></div><div class="article-content" style="max-width:800px"><ul>
+<li>Kubernetes: docker 容器管理工具，目前公有雲間公認且推廣技術，地端虛擬機可由kubeadm、kubectl、kubelet達到公有雲上執行的效果。<ul>
+<li>kubeadm: k8s用於引導群集的命令</li>
+<li>kubelet: 負責啟動Pod跟容器間的操作</li>
+<li>kubectl: 執行k8s命令</li>
+</ul>
+</li>
+<li>作業環境<ul>
+<li>OS: Ubuntu 5.4.0</li>
+<li>Hard Disk: 40GB</li>
+<li>Ram: 8GB</li>
+<li>CPU: 4核<h4 id="注意-安裝前須先確認docker已正確安裝-建議安裝高於1-13-X"><a href="#注意-安裝前須先確認docker已正確安裝-建議安裝高於1-13-X" class="headerlink" title="注意: 安裝前須先確認docker已正確安裝(建議安裝高於1.13.X)"></a>注意: 安裝前須先確認docker已正確安裝(建議安裝高於1.13.X)</h4></li>
+</ul>
+</li>
+<li><p>安裝kubeadm、kubectl、kubelet</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">apt-get update &amp;&amp; apt-get install -y apt-transport-https curl</span><br><span class="line">curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | </span><br><span class="line">apt-key add -</span><br><span class="line">cat &lt;&lt;EOF &gt;/etc/apt/sources.list.d/kubernetes.list</span><br><span class="line">deb http://apt.kubernetes.io/ kubernetes-xenial main</span><br><span class="line">EOF</span><br><span class="line">apt-get update</span><br><span class="line">apt-get install -y kubelet kubeadm kubectl</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>kubeadm初始化</p>
+<ul>
+<li>先取得kubeadm token<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm token generate</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>用取得的token來啟動kubeadm</p>
+<ul>
+<li>pod-network-cidr 10.244.0.0/16 為預設值，若要改動記得修改kubeadm.ymal裡面的配置<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubeadm init \</span><br><span class="line">  --pod-network-cidr 10.244.0.0/16 \</span><br><span class="line">  --token &apos;取得的Token&apos; \</span><br><span class="line">  --apiserver-advertise-address 10.9.10.104 \</span><br><span class="line">  --ignore-preflight-errors=Swap</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>為kubeadm新增憑證捷徑且賦予權限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir ~/.kube &amp;&amp; cp /etc/kubernetes/admin.conf ~/.kube/config</span><br><span class="line">chown $(id -u):$(id -g) ~/.kube/config</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>若有需要做叢集，k8s pod 間網路的溝通須由代理完成，這邊使用flannel實作</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.10.0/Documentation/kube-flannel.yml</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>執行完後檢查flannel是否正常執行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod -n kube-system</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>kubeadm init 後系統會提示nodes加入master的指令，可直接複製貼上於node機器上執行(要先安裝好kubeadm、kubectl、kubelet)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubeadm join ............................................. \</span><br><span class="line">   --ignore-preflight-errors=Swap</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安裝過程中或是爾後部屬yaml檔為正常啟動可以檢查k8s Log來查看問題</p>
+<ul>
+<li>由’get pod’來觀察取得有問題的容器名稱</li>
+<li>再由’describe’來訂閱容器執行時的log<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod -n &apos;Pod Name Space&apos;</span><br><span class="line">kubectl describe pod &apos;Pod Name&apos; -n &apos;Pod Name Space&apos;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="若有發生node連不到master的話可以嘗試在kubeadm-reset前先刪除flannel暫存資料"><a href="#若有發生node連不到master的話可以嘗試在kubeadm-reset前先刪除flannel暫存資料" class="headerlink" title="若有發生node連不到master的話可以嘗試在kubeadm reset前先刪除flannel暫存資料"></a>若有發生node連不到master的話可以嘗試在kubeadm reset前先刪除flannel暫存資料</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rm -rf /var/lib/cni/flannel/* &amp;&amp; rm -rf /var/lib/cni/networks/cbr0/* &amp;&amp; ip link delete cni0  </span><br><span class="line">rm -rf /var/lib/cni/networks/cni0/*</span><br><span class="line">kubeadm reset</span><br><span class="line">kubeadm join ........</span><br></pre></td></tr></table></figure></div><div class="article-meta" style="max-width:800px"></div><ul class="navication"><li class="home"><a href="/"><i class="icon icon-home"></i></a></li><li><a href="/2018/07/11/Kubernetes-Dashboard/"><i class="icon icon-arror-left"></i></a></li></ul><div class="page-footer"><div class="top"><ul class="social"><li><a href="https://github.com/zongu" title="Zongu" target="_blank"><i class="icon icon-github"></i></a></li><li><a href="https://www.facebook.com/zongyuh2" title="Zongu" target="_blank"><i class="icon icon-facebook"></i></a></li><li><a href="https://chretbow.github.io" title="Chretbow" target="_blank"><i class="icon icon-github"></i></a></li></ul></div><div class="bottom"><p class="copyright">© 2024 Carter`s Blog</p></div></div></div><script>var wrap = document.getElementById('wrap');
+window.onload = function () {
+  wrap.className += ' done';
+}</script></body></html>

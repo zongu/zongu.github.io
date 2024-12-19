@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"><meta name="format-detection" content="telephone=no"><meta name="format-detection" content="email=no"><meta name="description"><meta name="keywords" content="kubernets"><title>MongoDB簡易優化查詢 - Carter`s Blog</title><link rel="stylesheet" href="/css/main_style.min.css"><link rel="icon" href="/favicon.ico"></head><body><input id="navi" type="checkbox"><ul class="main-navication"><li><a href="/"><span>Home</span></a></li><li><a href="https://github.com/zongu"><span>Github</span></a></li></ul><div class="wrapper" id="wrap"><div class="post-header"><label class="navi-button light" for="navi">MENU</label><img class="background" src="/img/galaxy02.jpg"><div class="post-title"><h1 class="title">MongoDB簡易優化查詢</h1><ul class="meta"><li><i class="icon icon-author"></i>Carter Ho</li><li><i class="icon icon-clock"></i>2 Minutes</li><li><i class="icon icon-calendar"></i>2021年11月11日</li></ul></div></div><div class="article-content" style="max-width:800px"><h2 id="cursor-explain"><a href="#cursor-explain" class="headerlink" title="cursor.explain()"></a>cursor.explain()</h2><ul>
+<li>可以在db.collection.find()加入explain()獲取計劃資訊</li>
+<li>explain()獲取資訊模式有三種<ul>
+<li>queryPlanner: 獲取查詢資訊，預設模式</li>
+<li>executionStats: 除了queryPlanner資訊外，額外提供winning plan訊息</li>
+<li>allPlansExecution: 提供queryPlanner和executionStats，額外提供候選計畫</li>
+</ul>
+</li>
+</ul>
+<h2 id="獲得資訊可由STAGE得知索引使用狀況"><a href="#獲得資訊可由STAGE得知索引使用狀況" class="headerlink" title="獲得資訊可由STAGE得知索引使用狀況"></a>獲得資訊可由STAGE得知索引使用狀況</h2><ul>
+<li>COLLSCAN: 集合掃描，沒有使用到索引查詢</li>
+<li>IXSCAN: 有用到索引查詢</li>
+<li>FETCH: 檢索文件</li>
+</ul>
+<h2 id="queryPlanner相關資訊"><a href="#queryPlanner相關資訊" class="headerlink" title="queryPlanner相關資訊"></a>queryPlanner相關資訊</h2><ul>
+<li>explain.queryPlanner.namespace: 查詢命名空間</li>
+<li>explain.queryPlanner.indexFilterSet: 是否應用索引過濾器(可忽略)</li>
+<li>explain.queryPlanner.queryHash: mongodb用來查詢的16進制字串(不會異動)</li>
+<li>explain.queryPlanner.planCacheKey: 當前可用索引含數(會異動)</li>
+<li>explain.queryPlanner.winningPlan: 為有效查詢樹狀結構，子結構存在於inputStage，有多個子結構則會存在於inputStages集合</li>
+<li>explain.queryPlanner.winningPlan.stage: 該階段查詢索引使用狀況</li>
+<li>explain.queryPlanner.winningPlan.inputStage: 子結構索引使用狀況</li>
+<li>explain.queryPlanner.winningPlan.inputStages: 子結構集合索引使用狀況</li>
+</ul>
+<h2 id="executionStats相關資訊"><a href="#executionStats相關資訊" class="headerlink" title="executionStats相關資訊"></a>executionStats相關資訊</h2><ul>
+<li>explain.executionStats.nReturned: 符合查詢條件文件數量</li>
+<li>explain.executionStats.executionTimeMillis: 查詢耗費時間</li>
+<li>explain.executionStats.totalKeysExamined: 掃描索引數量</li>
+<li>explain.executionStats.totalDocsExamined: 審查的文件總數，非返回文件的數量(索引精準度)</li>
+<li>explain.executionStats.executionStages.works: 查詢所應用到的工作單位</li>
+<li>explain.executionStats.executionStages.inputStage.keysExamined: 非索引查詢使用的數量</li>
+<li>explain.executionStats.executionStages.inputStage.docsExamined: 非索引查詢文檔數</li>
+</ul>
+<p><br></p>
+<p><a href="https://docs.mongodb.com/v4.2/reference/method/cursor.explain" target="_blank" rel="noopener">參考來源(explain)</a><br><br><br><a href="https://docs.mongodb.com/v4.2/reference/explain-results" target="_blank" rel="noopener">參考來源(explain結果)</a></p>
+</div><div class="article-meta" style="max-width:800px"></div><ul class="navication"><li class="home"><a href="/"><i class="icon icon-home"></i></a></li><li><a href="/2022/01/12/VS2019建立SQL專案/"><i class="icon icon-arror-left"></i></a></li><li><a href="/2021/09/02/gRPC大小事/"><i class="icon icon-arror-right"></i></a></li></ul><div class="page-footer"><div class="top"><ul class="social"><li><a href="https://github.com/zongu" title="Zongu" target="_blank"><i class="icon icon-github"></i></a></li><li><a href="https://www.facebook.com/zongyuh2" title="Zongu" target="_blank"><i class="icon icon-facebook"></i></a></li><li><a href="https://chretbow.github.io" title="Chretbow" target="_blank"><i class="icon icon-github"></i></a></li></ul></div><div class="bottom"><p class="copyright">© 2024 Carter`s Blog</p></div></div></div><script>var wrap = document.getElementById('wrap');
+window.onload = function () {
+  wrap.className += ' done';
+}</script></body></html>
